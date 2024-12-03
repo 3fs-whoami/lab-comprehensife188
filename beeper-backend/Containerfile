@@ -4,5 +4,5 @@ COPY --chown=jboss . .
 RUN mvn -s settings.xml package
 
 FROM registry.ocp4.example.com:8443/ubi8/openjdk-17-runtime:1.12
-COPY --from=jboss /home/jboss/target/beeper-1.0.0.jar .
+COPY --from=builder /home/jboss/target/beeper-1.0.0.jar .
 ENTRYPOINT ["java", "-jar", "beeper-1.0.0.jar"]
