@@ -1,0 +1,66 @@
+podman-compose version: 1.0.6
+['podman', '--version', '']
+using podman version: 4.2.0
+** excluding:  set()
+['podman', 'inspect', '-t', 'image', '-f', '{{.Id}}', 'beeper-api:v1']
+Error: inspecting object: beeper-api:v1: image not known
+podman build -f beeper-backend/Dockerfile -t beeper-api:v1 beeper-backend
+Trying to pull registry.ocp4.example.com:8443/ubi8/openjdk-17-runtime:1.12...
+Error: error creating build container: initializing source docker://registry.ocp4.example.com:8443/ubi8/openjdk-17-runtime:1.12: reading manifest 1.12 in registry.ocp4.example.com:8443/ubi8/openjdk-17-runtime: unauthorized: access to the requested resource is not authorized
+exit code: 125
+['podman', 'inspect', '-t', 'image', '-f', '{{.Id}}', 'beeper-ui:v1']
+Error: inspecting object: beeper-ui:v1: image not known
+podman build -f beeper-ui/Dockerfile -t beeper-ui:v1 beeper-ui
+Trying to pull registry.ocp4.example.com:8443/ubi8/nodejs-16:1...
+Error: error creating build container: initializing source docker://registry.ocp4.example.com:8443/ubi8/nodejs-16:1: reading manifest 1 in registry.ocp4.example.com:8443/ubi8/nodejs-16: unauthorized: access to the requested resource is not authorized
+exit code: 125
+['podman', 'ps', '--filter', 'label=io.podman.compose.project=comprehensive-review', '-a', '--format', '{{ index .Labels "io.podman.compose.config-hash"}}']
+podman volume inspect comprehensive-review_beeper-data || podman volume create comprehensive-review_beeper-data
+['podman', 'volume', 'inspect', 'comprehensive-review_beeper-data']
+['podman', 'network', 'exists', 'comprehensive-review_beeper-backend']
+podman run --name=beeper-db -d --label io.podman.compose.config-hash=217ea4122a7cc00178f2ee7da3c1af7b378c7ae52af91049d6c95fcf83a9d3e1 --label io.podman.compose.project=comprehensive-review --label io.podman.compose.version=1.0.6 --label PODMAN_SYSTEMD_UNIT=podman-compose@comprehensive-review.service --label com.docker.compose.project=comprehensive-review --label com.docker.compose.project.working_dir=/home/student/DO188/labs/comprehensive-review --label com.docker.compose.project.config_files=podman-compose.yml --label com.docker.compose.container-number=1 --label com.docker.compose.service=postgresql -e POSTGRESQL_USER=beeper -e POSTGRESQL_PASSWORD=beeper123 -e POSTGRESQL_DATABASE=beeper -v comprehensive-review_beeper-data:/var/lib/pgsql/data --net comprehensive-review_beeper-backend --network-alias postgresql registry.ocp4.example.com:8443/rhel9/postgresql-13:1
+Trying to pull registry.ocp4.example.com:8443/rhel9/postgresql-13:1...
+Error: initializing source docker://registry.ocp4.example.com:8443/rhel9/postgresql-13:1: reading manifest 1 in registry.ocp4.example.com:8443/rhel9/postgresql-13: unauthorized: access to the requested resource is not authorized
+exit code: 125
+podman start beeper-db
+Error: no container with name or ID "beeper-db" found: no such container
+exit code: 125
+['podman', 'network', 'exists', 'comprehensive-review_beeper-backend']
+['podman', 'network', 'exists', 'comprehensive-review_beeper-frontend']
+podman run --name=beeper-api -d --label io.podman.compose.config-hash=217ea4122a7cc00178f2ee7da3c1af7b378c7ae52af91049d6c95fcf83a9d3e1 --label io.podman.compose.project=comprehensive-review --label io.podman.compose.version=1.0.6 --label PODMAN_SYSTEMD_UNIT=podman-compose@comprehensive-review.service --label com.docker.compose.project=comprehensive-review --label com.docker.compose.project.working_dir=/home/student/DO188/labs/comprehensive-review --label com.docker.compose.project.config_files=podman-compose.yml --label com.docker.compose.container-number=1 --label com.docker.compose.service=api -e DB_HOST=beeper-db --net comprehensive-review_beeper-backend,comprehensive-review_beeper-frontend --network-alias api beeper-api:v1
+Resolving "beeper-api" using unqualified-search registries (/etc/containers/registries.conf)
+Trying to pull registry.fedoraproject.org/beeper-api:v1...
+Trying to pull registry.access.redhat.com/beeper-api:v1...
+Trying to pull registry.centos.org/beeper-api:v1...
+Trying to pull docker.io/library/beeper-api:v1...
+Error: 4 errors occurred while pulling:
+ * initializing source docker://registry.fedoraproject.org/beeper-api:v1: reading manifest v1 in registry.fedoraproject.org/beeper-api: manifest unknown: manifest unknown
+ * initializing source docker://registry.access.redhat.com/beeper-api:v1: reading manifest v1 in registry.access.redhat.com/beeper-api: name unknown: Repo not found
+ * initializing source docker://registry.centos.org/beeper-api:v1: pinging container registry registry.centos.org: Get "https://registry.centos.org/v2/": dial tcp: lookup registry.centos.org on 172.25.250.254:53: no such host
+ * initializing source docker://beeper-api:v1: reading manifest v1 in docker.io/library/beeper-api: errors:
+denied: requested access to the resource is denied
+unauthorized: authentication required
+
+exit code: 125
+podman start beeper-api
+Error: no container with name or ID "beeper-api" found: no such container
+exit code: 125
+['podman', 'network', 'exists', 'comprehensive-review_beeper-frontend']
+podman run --name=beeper-ui -d --label io.podman.compose.config-hash=217ea4122a7cc00178f2ee7da3c1af7b378c7ae52af91049d6c95fcf83a9d3e1 --label io.podman.compose.project=comprehensive-review --label io.podman.compose.version=1.0.6 --label PODMAN_SYSTEMD_UNIT=podman-compose@comprehensive-review.service --label com.docker.compose.project=comprehensive-review --label com.docker.compose.project.working_dir=/home/student/DO188/labs/comprehensive-review --label com.docker.compose.project.config_files=podman-compose.yml --label com.docker.compose.container-number=1 --label com.docker.compose.service=ui --net comprehensive-review_beeper-frontend --network-alias ui -p 8080:8080 beeper-ui:v1
+Resolving "beeper-ui" using unqualified-search registries (/etc/containers/registries.conf)
+Trying to pull registry.fedoraproject.org/beeper-ui:v1...
+Trying to pull registry.access.redhat.com/beeper-ui:v1...
+Trying to pull registry.centos.org/beeper-ui:v1...
+Trying to pull docker.io/library/beeper-ui:v1...
+Error: 4 errors occurred while pulling:
+ * initializing source docker://registry.fedoraproject.org/beeper-ui:v1: reading manifest v1 in registry.fedoraproject.org/beeper-ui: manifest unknown: manifest unknown
+ * initializing source docker://registry.access.redhat.com/beeper-ui:v1: reading manifest v1 in registry.access.redhat.com/beeper-ui: name unknown: Repo not found
+ * initializing source docker://registry.centos.org/beeper-ui:v1: pinging container registry registry.centos.org: Get "https://registry.centos.org/v2/": dial tcp: lookup registry.centos.org on 172.25.250.254:53: no such host
+ * initializing source docker://beeper-ui:v1: reading manifest v1 in docker.io/library/beeper-ui: errors:
+denied: requested access to the resource is denied
+unauthorized: authentication required
+
+exit code: 125
+podman start beeper-ui
+Error: no container with name or ID "beeper-ui" found: no such container
+exit code: 125

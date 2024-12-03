@@ -33,7 +33,7 @@ services:
 volumes:
   beeper-data: {}
 networks:
-  beeper-backend:
-    external: true
-  beeper-frontend:
-    external: true
+  beeper-backend: {}
+##    external: true
+  beeper-frontend: {}
+##    external: true
