@@ -14,7 +14,7 @@ services:
     build:
       context: beeper-backend
       dockerfile: Dockerfile
-    image: "beeper-api:v1"
+    image: "localhost/beeper-api:v1"
     container_name: beeper-api
     environment:
       DB_HOST: beeper-db
@@ -25,15 +25,17 @@ services:
     build:
       context: beeper-ui
       dockerfile: Dockerfile
-    image: "beeper-ui:v1"
+    image: "localhost/beeper-ui:v1"
     container_name: beeper-ui
-    ports: "8080:8080"
+    ports: 
+      - "8080:8080"
     networks:
       - beeper-frontend
 volumes:
-  beeper-data: {}
+  beeper-data: 
+    external: true
 networks:
-  beeper-backend: {}
-##    external: true
-  beeper-frontend: {}
-##    external: true
+  beeper-backend: 
+    external: true
+  beeper-frontend: 
+    external: true
